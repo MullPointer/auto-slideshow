@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "target": "ESNext", /*Need ESNext for wicg-file-system-access dependency of mp4-muxer to work*/
+      "module": "ESNext",
+      "sourceMap": true,
+      "outDir": "dist",
+      "moduleResolution":"bundler"
+    }
+  }

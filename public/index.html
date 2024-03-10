@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto Slideshow</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "mp4-muxer": "./mp4-muxer.mjs"
+          }
+        }
+    </script>  
+    <script type="module" src="script.js"></script>
+</head>
+
+<body class="">
+    <header class="flex flex-row justify-between top-0 w-full max-w-5xl bg-white">
+      <img src="/public/icon.png" alt="Auto Slideshow Editor" class="w-16 h-16" />
+
+      <div class="flex flex-row flex-wrap justify-end">
+        <a id="published-link" class="m-1 p-2">Not published</a>
+        <div>
+          <button id="ctrl-import" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Import</button>
+          <button id="ctrl-export" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Export</button>
+          <button id="ctrl-publish" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Publish</button>
+        </div>
+      </div>
+      
+      
+    </header>
+    <hr>
+    <dialog id="image-select" class="fixed p-4 border-4 rounded-md border-blue-900 w-1/2 min-w-96">
+      <h2>Select an image</h2>
+      <label class="block my-4">
+        URL:
+        <input id="image-select-URL" type="text" class="m-1 p-2 border rounded-md border-blue-300" required auto-focus></input>
+      </label>
+      <img id="image-select-preview" referrerpolicy="no-referrer">
+      <div class="flex flex-row justify-around mt-4">
+        <button class="ctrl-ok w-16 m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">OK</button>
+        <button class="cltl-cancel m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Cancel</button>
+      </div>
+    </dialog>
+
+    <main class="max-w-5xl">
+      <section id="slides">
+        <section class="slide flex flex-row flex-wrap justify-evenly mx-2 my-4 border-2 border-blue-700 rounded-md">
+          <button class="ctrl-img w-96 aspect-video text-center h-auto object-contain m-2 border border-blue-700" aria-label="Select an image" >
+            <img alt="Select an image" referrerpolicy="same-origin">
+          </button>
+          <textarea class="ctrl-text min-h-40 grow resize-none m-2 border border-blue-700"></textarea>
+          <div class="flex sm:flex-row md:flex-col justify-evenly m-1">
+            <!--TODO - fix breakpoints for control layout direction when padding etc fixed-->
+            <button class="ctrl-up m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Move Up</button>
+            <button class="ctrl-down m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Move Down</button>
+            <button class="ctrl-split m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Split</button>
+            <button class="ctrl-combine m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Combine Up</button>
+          </div>
+        </section>
+      </section>
+      <div class="flex justify-around">
+        <button id="ctrl-add-slide" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Add Slide</button>
+      </div>
+    </main>
+
+</body>
+</html>
