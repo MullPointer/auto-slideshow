@@ -1,5 +1,8 @@
 
 class SlideElement extends HTMLElement {
+  protected _imgInput = this.querySelector('input[type=image]') as HTMLInputElement;
+  private _imageURL = "";
+
   get slideText() {
     return this.querySelector('textarea').value;
   }
@@ -8,13 +11,11 @@ class SlideElement extends HTMLElement {
   }
 
   get imgURL() {
-    return this.dataset._imageURL;
+    return this._imageURL;
   }
   set imgURL(value) {
-    this.dataset._imageURL = value;
-    const img = this.querySelector('input[type=image]') as HTMLInputElement;
-      //TODO - something more efficient than querying for these each time
-    img.src = value;
+    this._imageURL = value; //need to store separately as input element returns page URL if no src set
+    this._imgInput.src = value;
   }
 
   nextSlide() : SlideElement {
@@ -44,10 +45,12 @@ class SlideElement extends HTMLElement {
     }
     return null;
   }
+
 }
 
 customElements.define("slide-section", SlideElement, { extends: "section" });
 
+const slidesCol = document.getElementById('slides');
 const slideSelector = 'section[is=slide-section]';
 const slideTemplate = (()=>{
   const initSlide = document.querySelector(slideSelector) as HTMLElement;
@@ -60,7 +63,6 @@ let slideIDCounter = 0;
 
 
 function addSlide(slideBefore: HTMLElement = null, initial: {text: string, imageURL: string} = {text:"",imageURL:""}) {
-  const slidesCol = document.getElementById('slides');
   const newSlide = slideTemplate.cloneNode(true) as SlideElement;
   newSlide.slideText = initial.text;
   slideIDCounter++;
@@ -79,9 +81,8 @@ document.getElementById('ctrl-add-slide').addEventListener('click', () => {
 
 
 document.getElementById('slides').addEventListener('click', (
-  event: PointerEvent & { target: HTMLInputElement , currentTarget: HTMLInputElement }
+  event: PointerEvent & { target: HTMLInputElement }
   ) => {
-  const slidesCol = event.currentTarget;
   const currentSlide = event.target.closest(slideSelector) as SlideElement;
   console.log('control event ',event.target.dataset.ctrl);
   let target: SlideElement;
@@ -128,10 +129,12 @@ document.getElementById('slides').addEventListener('click', (
 
 
 
+const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
+const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
+const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
 
-//TODO - these functions should probably be methods added to the dialog
+//TODO - these functions should maybe be methods added to the dialog
 function setImgSelectError(errorMessage: string) {
-  const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
   imgSelectURLErrorEl.innerText = errorMessage;
   if (errorMessage === '') {
     imgSelectURLErrorEl.classList.add('hidden');
@@ -143,8 +146,6 @@ function setImgSelectError(errorMessage: string) {
 }
 
 function openImgSelectDialog(slideID: string) {
-  const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
-  const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
   const targetSlide = document.getElementById(slideID) as SlideElement;
   imgSelectDialog.dataset.targetSlide = slideID;
   const imgURL = targetSlide.imgURL;
@@ -170,10 +171,7 @@ function isValidHttpUrl(s: string) {
 document.getElementById('image-select').addEventListener('click', (
   event: PointerEvent & { target: HTMLDialogElement}
   ) => {
-  const imgSelectDialog = event.currentTarget as HTMLDialogElement;
-  const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
   
-  const slidesCol = document.getElementById('slides');
   switch(event.target.dataset.ctrl) {
     case 'ok':
       const url = imgSelectURL.value;
