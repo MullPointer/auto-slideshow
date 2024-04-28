@@ -61,6 +61,11 @@ class SlideElement extends HTMLElement {
 
 }
 
+
+
+
+//INITIALIZATION
+
 customElements.define("slide-section", SlideElement, { extends: "section" });
 
 const slidesCol = document.getElementById('slides');
@@ -75,19 +80,11 @@ const slideTemplate = (()=>{
 let slideIDCounter = 0;
 
 
-function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
-  const newSlide = slideTemplate.cloneNode(true) as SlideElement;
-  newSlide.slideProps = initial;
-  slideIDCounter++;
-  newSlide.id = "slide-" + slideIDCounter;
-  slidesCol.insertBefore(newSlide, slideBefore);
-}
 
 
-document.getElementById('ctrl-add-slide').addEventListener('click', () => {
-  addSlide();
-});
 
+
+//MAIN MENU
 
 document.getElementById('ctrl-import').addEventListener('click', () => {
   const input = window.prompt('input XML');
@@ -97,7 +94,7 @@ document.getElementById('ctrl-import').addEventListener('click', () => {
     window.alert('Failed to import ' + errorMessage);
   }
   else {
-    //TODO clear existing slides
+    clearSlides();
     ss.mapSlides((props:SlideProperties) => addSlide(null,props));
   }
 });
@@ -119,6 +116,7 @@ document.getElementById('ctrl-publish').addEventListener('click', () => {
 
 
 
+//SLIDE CONTROLS
 
 document.getElementById('slides').addEventListener('click', (
   event: PointerEvent & { target: HTMLInputElement }
@@ -167,7 +165,30 @@ document.getElementById('slides').addEventListener('click', (
   
 });
 
+document.getElementById('ctrl-add-slide').addEventListener('click', () => {
+  addSlide();
+});
 
+
+
+function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
+  const newSlide = slideTemplate.cloneNode(true) as SlideElement;
+  newSlide.slideProps = initial;
+  slideIDCounter++;
+  newSlide.id = "slide-" + slideIDCounter;
+  slidesCol.insertBefore(newSlide, slideBefore);
+}
+
+function clearSlides() {
+  const slideEls = document.querySelectorAll(slideSelector);
+  for (const slideNode of slideEls) {
+    slideNode.remove();
+  }
+}
+
+
+
+//IMAGE SELECTION
 
 const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
 const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
