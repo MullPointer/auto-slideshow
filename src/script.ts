@@ -1,7 +1,9 @@
 
+import { SerializableSlideshow, SlideProperties } from "./serializer.js";
+
 class SlideElement extends HTMLElement {
   protected _imgInput = this.querySelector('input[type=image]') as HTMLInputElement;
-  private _imageURL = "";
+  private _imgURL = "";
 
   get slideText() {
     return this.querySelector('textarea').value;
@@ -11,11 +13,22 @@ class SlideElement extends HTMLElement {
   }
 
   get imgURL() {
-    return this._imageURL;
+    return this._imgURL;
   }
   set imgURL(value) {
-    this._imageURL = value; //need to store separately as input element returns page URL if no src set
+    this._imgURL = value; //need to store separately as input element returns page URL if no src set
     this._imgInput.src = value;
+  }
+
+  get slideProps(): SlideProperties {
+    return {
+      text: this.slideText,
+      imgURL: this.imgURL
+    };
+  }
+  set slideProps(props:SlideProperties) {
+    this.slideText = props.text;
+    this.imgURL = props.imgURL;
   }
 
   nextSlide() : SlideElement {
@@ -62,18 +75,45 @@ const slideTemplate = (()=>{
 let slideIDCounter = 0;
 
 
-function addSlide(slideBefore: HTMLElement = null, initial: {text: string, imageURL: string} = {text:"",imageURL:""}) {
+function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
   const newSlide = slideTemplate.cloneNode(true) as SlideElement;
-  newSlide.slideText = initial.text;
+  newSlide.slideProps = initial;
   slideIDCounter++;
   newSlide.id = "slide-" + slideIDCounter;
-  newSlide.imgURL = initial.imageURL;
   slidesCol.insertBefore(newSlide, slideBefore);
 }
 
 
 document.getElementById('ctrl-add-slide').addEventListener('click', () => {
   addSlide();
+});
+
+
+document.getElementById('ctrl-import').addEventListener('click', () => {
+  const input = window.prompt('input XML');
+  const ss = new SerializableSlideshow();
+  const errorMessage = ss.deserialize(input);
+  if (errorMessage) {
+    window.alert('Failed to import ' + errorMessage);
+  }
+  else {
+    //TODO clear existing slides
+    ss.mapSlides((props:SlideProperties) => addSlide(null,props));
+  }
+});
+
+document.getElementById('ctrl-export').addEventListener('click', () => {
+  const ss = new SerializableSlideshow();
+  const slideEls = document.querySelectorAll(slideSelector);
+  for (const slideNode of slideEls) {
+    const slideEl = slideNode as SlideElement;
+    ss.appendSlide(slideEl.slideProps);
+  }
+  const output = ss.serialize();
+  window.prompt("result", output);
+});
+
+document.getElementById('ctrl-publish').addEventListener('click', () => {
 });
 
 
@@ -110,7 +150,7 @@ document.getElementById('slides').addEventListener('click', (
       const newText = currentText.substring(cursorPos);
       addSlide(target, {
         text:newText,
-        imageURL:currentSlide.imgURL
+        imgURL:currentSlide.imgURL
         });
       break;
     case 'combine':
