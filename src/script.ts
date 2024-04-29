@@ -86,43 +86,6 @@ let slideIDCounter = 0;
 
 //MAIN MENU
 
-document.getElementById('ctrl-slideshow-name').addEventListener('click', () => {
-});
-
-document.getElementById('ctrl-make-link').addEventListener('click', () => {
-});
-
-document.getElementById('ctrl-import').addEventListener('click', () => {
-  const input = window.prompt('input XML');
-  const ss = new SerializableSlideshow();
-  const errorMessage = ss.deserialize(input);
-  if (errorMessage) {
-    window.alert('Failed to import ' + errorMessage);
-  }
-  else {
-    clearSlides();
-    ss.mapSlides((props:SlideProperties) => addSlide(null,props));
-  }
-});
-
-document.getElementById('ctrl-export').addEventListener('click', () => {
-  const ss = new SerializableSlideshow();
-  const slideEls = document.querySelectorAll(slideSelector);
-  for (const slideNode of slideEls) {
-    const slideEl = slideNode as SlideElement;
-    ss.appendSlide(slideEl.slideProps);
-  }
-  const output = ss.serialize();
-  window.prompt("result", output);
-});
-
-
-
-
-
-
-
-//SLIDE CONTROLS
 
 const mainMenu = document.getElementById('main-menu') as HTMLElement;
 const mainMenuList = document.getElementById('main-menu-list') as HTMLElement;
@@ -163,9 +126,43 @@ document.addEventListener('click', (
   }
 });
 
+document.getElementById('ctrl-slideshow-name').addEventListener('click', () => {
+});
+
+document.getElementById('ctrl-make-link').addEventListener('click', () => {
+});
+
+document.getElementById('ctrl-import').addEventListener('click', () => {
+  const input = window.prompt('input XML');
+  const ss = new SerializableSlideshow();
+  const errorMessage = ss.deserialize(input);
+  if (errorMessage) {
+    window.alert('Failed to import ' + errorMessage);
+  }
+  else {
+    clearSlides();
+    ss.mapSlides((props:SlideProperties) => addSlide(null,props));
+  }
+});
+
+document.getElementById('ctrl-export').addEventListener('click', () => {
+  const ss = new SerializableSlideshow();
+  const slideEls = document.querySelectorAll(slideSelector);
+  for (const slideNode of slideEls) {
+    const slideEl = slideNode as SlideElement;
+    ss.appendSlide(slideEl.slideProps);
+  }
+  const output = ss.serialize();
+  window.prompt("result", output);
+});
 
 
 
+
+
+
+
+//SLIDE CONTROLS
 
 document.getElementById('slides').addEventListener('click', (
   event: PointerEvent & { target: HTMLInputElement }
