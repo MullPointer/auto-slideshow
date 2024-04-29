@@ -21,12 +21,29 @@
       <img src="/public/icon.png" alt="Auto Slideshow Editor" class="w-16 h-16" />
 
       <div class="flex flex-row flex-wrap justify-end">
-        <a id="published-link" class="m-1 p-2">Not published</a>
-        <div>
-          <button id="ctrl-import" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Import</button>
-          <button id="ctrl-export" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Export</button>
-          <button id="ctrl-publish" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Publish</button>
-        </div>
+        <button><h1 id="ctrl-slideshow-name" class="m-1 p-2 ">Untitled</h1></button>
+
+        <nav id="main-menu">
+          <button id="ctrl-menu" aria-label="Menu" aria-expanded="false" aria-controls="main-menu"
+            class="m-2 p-3 bg-white hover:bg-blue-300 border rounded-md border-blue-500 aria-expanded:bg-blue-700 group space-y-1.5">
+            <div class="w-8 h-1 bg-blue-700 group-aria-expanded:bg-white"></div>
+            <div class="w-8 h-1 bg-blue-700 group-aria-expanded:bg-white"></div>
+            <div class="w-8 h-1 bg-blue-700 group-aria-expanded:bg-white"></div>
+          </button>
+          <ul id="main-menu-list" class="absolute right-2 w-56 z-10 list-none aria-hidden:invisible" aria-hidden="true">
+            <li class="block border-2 border-b-0 last:border-2 border-blue-500 bg-white hover:bg-blue-300">
+              <button id="ctrl-make-link" class="w-full p-3 text-left">Make shareable Link</button>
+            </li>
+            <li class="block border-2 border-b-0 last:border-2 border-blue-500 bg-white hover:bg-blue-300">
+              <button id="ctrl-import" class="w-full p-3 text-left">Load from slideshow file</button>
+            </li>
+            <li class="block border-2 border-b-0 last:border-2 border-blue-500 bg-white hover:bg-blue-300">
+              <button id="ctrl-export" class="w-full p-3 text-left">Save to slideshow file</button>
+            </li>
+          </ul>
+        </nav>
+
+
       </div>
       
       
@@ -41,36 +58,37 @@
       </label>
       <img id="image-select-preview" referrerpolicy="no-referrer">
       <div class="flex flex-row justify-around mt-4">
-        <button data-ctrl="ok" class="w-16 m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">OK</button>
-        <button data-ctrl="cancel" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Cancel</button>
+        <button data-ctrl="ok" class="w-16 m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">OK</button>
+        <button data-ctrl="cancel" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Cancel</button>
       </div>
     </dialog>
 
     <main class="max-w-5xl">
       <section id="slides">
-        <section data-slide is="slide-section" class="invisible flex flex-row flex-wrap justify-evenly mx-2 my-4 border-2 border-blue-700 rounded-md">
+        <section data-slide is="slide-section" 
+          class="invisible flex flex-row flex-wrap justify-evenly mx-2 my-4 border bg-blue-50 border-blue-500 rounded-md">
           <input 
             type="image"
             data-ctrl="img"
-            class="w-96 aspect-video text-center h-auto object-contain m-2 border border-blue-700"
+            class="w-96 aspect-video max-w-[95%] m-2 text-center object-contain bg-white border border-blue-500"
             src=""
             alt="Select an image"
             referrerpolicy="same-origin"
           >
           </button>
-          <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-700"></textarea>
+          <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-500"></textarea>
           <div class="flex sm:flex-row md:flex-col justify-evenly m-1">
             <!--TODO - fix breakpoints for control layout direction when padding etc fixed-->
-            <button data-ctrl="up" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Move Up</button>
-            <button data-ctrl="down" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Move Down</button>
-            <button data-ctrl="split" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Split</button>
-            <button data-ctrl="combine" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Combine Up</button>
-            <button data-ctrl="delete" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Delete</button>
+            <button data-ctrl="up" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" >Move Up</button>
+            <button data-ctrl="down" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Move Down</button>
+            <button data-ctrl="split" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Split</button>
+            <button data-ctrl="combine" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Combine Up</button>
+            <button data-ctrl="delete" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Delete</button>
           </div>
         </section>
       </section>
       <div class="flex justify-around">
-        <button id="ctrl-add-slide" class="m-1 p-2 border rounded-md border-blue-700 hover:bg-blue-300">Add Slide</button>
+        <button id="ctrl-add-slide" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Add Slide</button>
       </div>
     </main>
 

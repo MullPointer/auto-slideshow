@@ -86,6 +86,12 @@ let slideIDCounter = 0;
 
 //MAIN MENU
 
+document.getElementById('ctrl-slideshow-name').addEventListener('click', () => {
+});
+
+document.getElementById('ctrl-make-link').addEventListener('click', () => {
+});
+
 document.getElementById('ctrl-import').addEventListener('click', () => {
   const input = window.prompt('input XML');
   const ss = new SerializableSlideshow();
@@ -110,13 +116,56 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
   window.prompt("result", output);
 });
 
-document.getElementById('ctrl-publish').addEventListener('click', () => {
-});
+
+
 
 
 
 
 //SLIDE CONTROLS
+
+const mainMenu = document.getElementById('main-menu') as HTMLElement;
+const mainMenuList = document.getElementById('main-menu-list') as HTMLElement;
+const menuButton = document.getElementById('ctrl-menu') as HTMLElement;
+
+function openMainMenu() {
+  mainMenuList.ariaHidden = 'false';
+  menuButton.ariaExpanded = 'true';
+}
+
+function closeMainMenu() {
+  mainMenuList.ariaHidden = 'true';
+  menuButton.ariaExpanded = 'false';
+}
+
+menuButton.addEventListener('click', () => {
+  if (menuButton.ariaExpanded === 'true') {
+    closeMainMenu();
+  }
+  else {
+    openMainMenu();
+  }
+});
+
+//close menu if press escape
+mainMenu.addEventListener('keyup', (e:KeyboardEvent) => {
+  if(menuButton.ariaExpanded === 'true' && e.key === 'Escape') {
+    closeMainMenu();
+  }
+});
+
+//close menu if click outside of nav
+document.addEventListener('click', (
+  e:PointerEvent & { target: HTMLElement}
+  ) => {
+  if ( !e.target.closest('#main-menu') ) {
+    closeMainMenu();
+  }
+});
+
+
+
+
 
 document.getElementById('slides').addEventListener('click', (
   event: PointerEvent & { target: HTMLInputElement }
