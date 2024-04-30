@@ -65,8 +65,16 @@
 
     <main class="max-w-5xl">
       <section id="slides">
-        <slide-section role="region"
-          class="invisible flex flex-row flex-wrap justify-evenly mx-2 my-4 border bg-blue-50 border-blue-500 rounded-md">
+        
+      </section>
+      <div class="flex justify-around">
+        <button id="ctrl-add-slide" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Add Slide</button>
+      </div>
+    </main>
+
+    <template id="template-slide-section">
+      <slide-section role="region"
+          class="flex flex-row flex-wrap justify-evenly mx-2 my-4 border bg-blue-50 border-blue-500 rounded-md">
           <input 
             type="image"
             data-ctrl="img"
@@ -78,7 +86,7 @@
           </button>
           <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-500"></textarea>
           <div class="flex sm:flex-row md:flex-col justify-evenly m-1">
-            <!--TODO - fix breakpoints for control layout direction when padding etc fixed-->
+            <!--TODO - fix breakpoints for controlling layout direction when padding etc decided-->
             <button data-ctrl="up" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" >Move Up</button>
             <button data-ctrl="down" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Move Down</button>
             <button data-ctrl="split" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Split</button>
@@ -86,11 +94,7 @@
             <button data-ctrl="delete" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Delete</button>
           </div>
         </slide-section>
-      </section>
-      <div class="flex justify-around">
-        <button id="ctrl-add-slide" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Add Slide</button>
-      </div>
-    </main>
+    </template>
 
 </body>
 </html>

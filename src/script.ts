@@ -70,13 +70,6 @@ window.customElements.define('slide-section', SlideElement);
 
 const slidesCol = document.getElementById('slides');
 const slideSelector = 'slide-section';
-const slideTemplate = (()=>{
-  const initSlide = document.querySelector(slideSelector) as HTMLElement;
-  let template = initSlide.cloneNode(true) as SlideElement;
-  template.classList.remove('invisible'); //template kept invisible so cannot be altered before load complete
-  initSlide.remove(); //remove template
-  return template;
-})();
 let slideIDCounter = 0;
 
 
@@ -272,6 +265,8 @@ document.getElementById('ctrl-add-slide').addEventListener('click', () => {
 
 
 function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
+  const templateElement = document.querySelector('#template-slide-section') as HTMLTemplateElement;
+  const slideTemplate = templateElement.content.children[0] as SlideElement;
   const newSlide = slideTemplate.cloneNode(true) as SlideElement;
   newSlide.slideProps = initial;
   slideIDCounter++;
