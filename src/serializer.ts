@@ -44,21 +44,21 @@ export class SerializableSlideshow {
     }
 
 
-    //returns null on success or an error message if fails
-    //TODO not sure this the most idomatic interface design
-    deserialize(input: string): string {
+    //throws SyntaxError on failure to parse file
+    deserialize(input: string) {
         let parser = new DOMParser();
         let inputDOM = parser.parseFromString(input, "application/xml");
         const errorNode = inputDOM.querySelector("parsererror");
+            //on Chrome just want to select the div under parsererror but not sure that applies to all browsers
         if (errorNode) {
-            return errorNode.textContent;
+            const errorMessage = errorNode.innerHTML;
+            throw new SyntaxError(errorMessage);
         }
         else if (inputDOM.documentElement.tagName !== 'slideshow') {
-            return 'Not a slideshow XML file';
+            throw new SyntaxError('Not a slideshow XML file');
         }
         else {
             this.dom = inputDOM;
-            return null;
         }
     }
 

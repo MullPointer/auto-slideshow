@@ -66,7 +66,7 @@ class SlideElement extends HTMLElement {
 
 //INITIALIZATION
 
-customElements.define("slide-section", SlideElement, { extends: "section" });
+window.customElements.define('slide-section', SlideElement, { extends: "section" });
 
 const slidesCol = document.getElementById('slides');
 const slideSelector = 'section[is=slide-section]';
@@ -85,7 +85,6 @@ let slideIDCounter = 0;
 
 
 //MAIN MENU
-
 
 const mainMenu = document.getElementById('main-menu') as HTMLElement;
 const mainMenuList = document.getElementById('main-menu-list') as HTMLElement;
@@ -126,24 +125,76 @@ document.addEventListener('click', (
   }
 });
 
-document.getElementById('ctrl-slideshow-name').addEventListener('click', () => {
+document.getElementById('ctrl-slideshow-name').addEventListener('click', (
+    event: PointerEvent & { target: HTMLInputElement }
+  ) => {
+  const nameH = event.target as HTMLElement;
+  const currentName = nameH.textContent;
+  
+  const nameChanger = document.createElement('input');
+  for (const c of nameH.classList) {
+    nameChanger.classList.add(c);
+  }
+  nameChanger.value = currentName;
+
+  nameH.classList.add('hidden');
+  nameH.after(nameChanger);
+  nameChanger.focus();
+  nameChanger.select();
+
+  nameChanger.addEventListener('blur', () => {
+    nameH.textContent = nameChanger.value;
+    nameH.classList.remove('hidden');
+    nameChanger.remove();
+  });
+
 });
 
 document.getElementById('ctrl-make-link').addEventListener('click', () => {
 });
 
-document.getElementById('ctrl-import').addEventListener('click', () => {
-  const input = window.prompt('input XML');
-  const ss = new SerializableSlideshow();
-  const errorMessage = ss.deserialize(input);
-  if (errorMessage) {
-    window.alert('Failed to import ' + errorMessage);
-  }
-  else {
+async function uploadXMLFile() : Promise<string>{
+  return new Promise((resolve,reject) => {
+    let input: HTMLInputElement = document.createElement('input');
+    input.type = 'file';
+    input.multiple = false;
+    input.accept = '.xml,application/xml';
+    input.onchange = () => {
+      let file: File = input.files[0];
+      console.log('file selected to load ', file);
+      if (file) {
+        resolve(file);
+      }
+      else {
+        reject('No file selected');
+      }
+    };
+    input.click();
+  }).then((file: File) => file.text());
+}
+
+document.getElementById('ctrl-import').addEventListener('click', async () => {
+  try {
+    const input = await uploadXMLFile();
+    console.log('loading file ', input);
+    const ss = new SerializableSlideshow();
+    ss.deserialize(input);
     clearSlides();
     ss.mapSlides((props:SlideProperties) => addSlide(null,props));
   }
+  catch (e) {
+    console.error(`Failed to load file `, e.message);
+    window.alert('Failed to load slideshow. Please confirm this is a valid slideshow file.');
+  }
 });
+
+function downloadFile(uri: string, downloadName: string) {
+  let anchor = document.createElement('a');
+  anchor.href = uri;
+  anchor.download = downloadName;
+  anchor.click();
+  //seems to work even though not attached to DOM - watch for platforms where it fails
+}
 
 document.getElementById('ctrl-export').addEventListener('click', () => {
   const ss = new SerializableSlideshow();
@@ -153,7 +204,10 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
     ss.appendSlide(slideEl.slideProps);
   }
   const output = ss.serialize();
-  window.prompt("result", output);
+  const blob = new Blob([output], {type:'application/xml'});
+  const uri = URL.createObjectURL(blob);
+  downloadFile(uri, 'slideshow.xml'); //TODO use slideshow name when added
+  URL.revokeObjectURL(uri);
 });
 
 
@@ -168,7 +222,7 @@ document.getElementById('slides').addEventListener('click', (
   event: PointerEvent & { target: HTMLInputElement }
   ) => {
   const currentSlide = event.target.closest(slideSelector) as SlideElement;
-  console.log('control event ',event.target.dataset.ctrl);
+  console.log('control event ', event.target.dataset.ctrl);
   let target: SlideElement;
   let nextSlide: SlideElement;
   switch(event.target.dataset.ctrl) {
