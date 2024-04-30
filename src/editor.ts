@@ -1,77 +1,16 @@
 
-import { SerializableSlideshow, SlideProperties } from "./serializer.js";
-
-class SlideElement extends HTMLElement {
-  protected _imgInput = this.querySelector('input[type=image]') as HTMLInputElement;
-  private _imgURL = "";
-
-  get slideText() {
-    return this.querySelector('textarea').value;
-  }
-  set slideText(value) {
-    this.querySelector('textarea').value = value;
-  }
-
-  get imgURL() {
-    return this._imgURL;
-  }
-  set imgURL(value) {
-    this._imgURL = value; //need to store separately as input element returns page URL if no src set
-    this._imgInput.src = value;
-  }
-
-  get slideProps(): SlideProperties {
-    return {
-      text: this.slideText,
-      imgURL: this.imgURL
-    };
-  }
-  set slideProps(props:SlideProperties) {
-    this.slideText = props.text;
-    this.imgURL = props.imgURL;
-  }
-
-  nextSlide() : SlideElement {
-    let checkNode = this.nextElementSibling ;
-    while (checkNode instanceof HTMLElement && checkNode)
-    {
-      if (checkNode instanceof SlideElement) { 
-        return checkNode;
-      }
-      else {
-        checkNode = checkNode.nextElementSibling;
-      }
-    }
-    return null;
-  }
-
-  previousSlide() : SlideElement {
-    let checkNode = this.previousElementSibling;
-    while (checkNode instanceof HTMLElement && checkNode)
-    {
-      if (checkNode instanceof SlideElement) {
-        return checkNode;
-      }
-      else {
-        checkNode = checkNode.previousElementSibling;
-      }
-    }
-    return null;
-  }
-
-}
-
+import { SlideSection } from "./slide-section.js";
+import { SlideProperties } from "./slide-data.js";
+import { SerializableSlideshow } from "./serializer.js";
+import { openImgSelectDialog } from "./image-select.js";
 
 
 
 //INITIALIZATION
 
-window.customElements.define('slide-section', SlideElement);
-
 const slidesCol = document.getElementById('slides');
 const slideSelector = 'slide-section';
 let slideIDCounter = 0;
-
 
 
 
@@ -193,7 +132,7 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
   const ss = new SerializableSlideshow();
   const slideEls = document.querySelectorAll(slideSelector);
   for (const slideNode of slideEls) {
-    const slideEl = slideNode as SlideElement;
+    const slideEl = slideNode as SlideSection;
     ss.appendSlide(slideEl.slideProps);
   }
   const output = ss.serialize();
@@ -210,17 +149,19 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
 
 
 //SLIDE CONTROLS
-
+//TODO - encapusulate more of these into slide-section component
 document.getElementById('slides').addEventListener('click', (
   event: PointerEvent & { target: HTMLInputElement }
   ) => {
-  const currentSlide = event.target.closest(slideSelector) as SlideElement;
+  const currentSlide = event.target.closest(slideSelector) as SlideSection;
   console.log('control event ', event.target.dataset.ctrl);
-  let target: SlideElement;
-  let nextSlide: SlideElement;
+  let target: SlideSection;
+  let nextSlide: SlideSection;
   switch(event.target.dataset.ctrl) {
     case 'img':
-      openImgSelectDialog(currentSlide.id);
+      openImgSelectDialog(currentSlide.imgURL, (selectedURL:string) => {
+          currentSlide.imgURL = selectedURL;
+        });
       break;
     case 'up':
       target = currentSlide.previousSlide();
@@ -263,11 +204,10 @@ document.getElementById('ctrl-add-slide').addEventListener('click', () => {
 });
 
 
-
 function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
   const templateElement = document.querySelector('#template-slide-section') as HTMLTemplateElement;
-  const slideTemplate = templateElement.content.children[0] as SlideElement;
-  const newSlide = slideTemplate.cloneNode(true) as SlideElement;
+  const slideTemplate = templateElement.content.children[0] as SlideSection;
+  const newSlide = slideTemplate.cloneNode(true) as SlideSection;
   newSlide.slideProps = initial;
   slideIDCounter++;
   newSlide.id = "slide-" + slideIDCounter;
@@ -280,70 +220,3 @@ function clearSlides() {
     slideNode.remove();
   }
 }
-
-
-
-//IMAGE SELECTION
-
-const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
-const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
-const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
-
-//TODO - these functions should maybe be methods added to the dialog
-function setImgSelectError(errorMessage: string) {
-  imgSelectURLErrorEl.innerText = errorMessage;
-  if (errorMessage === '') {
-    imgSelectURLErrorEl.classList.add('hidden');
-  }
-  else
-  {
-    imgSelectURLErrorEl.classList.remove('hidden');
-  }
-}
-
-function openImgSelectDialog(slideID: string) {
-  const targetSlide = document.getElementById(slideID) as SlideElement;
-  imgSelectDialog.dataset.targetSlide = slideID;
-  const imgURL = targetSlide.imgURL;
-  imgSelectURL.value = targetSlide.imgURL;
-  setImgSelectError('');
-  imgSelectDialog.showModal();
-};
-
-//from https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
-function isValidHttpUrl(s: string) {
-  let url;
-  
-  try {
-    url = new URL(s);
-  } catch (_) {
-    return false;  
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:";
-}
-
-
-document.getElementById('image-select').addEventListener('click', (
-  event: PointerEvent & { target: HTMLDialogElement}
-  ) => {
-  
-  switch(event.target.dataset.ctrl) {
-    case 'ok':
-      const url = imgSelectURL.value;
-      if (isValidHttpUrl(url)) {
-        const targetSlide = document.getElementById(imgSelectDialog.dataset.targetSlide) as SlideElement;
-        targetSlide.imgURL = url;
-        imgSelectDialog.dataset.targetSlide = null;
-        imgSelectDialog.close();
-      }
-      else {
-        setImgSelectError('Image link not valid.');
-      };
-      break;
-    case 'cancel':
-      imgSelectDialog.dataset.targetSlide = null;
-      imgSelectDialog.close();
-      break;
-  }
-});

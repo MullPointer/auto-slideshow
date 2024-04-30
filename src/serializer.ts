@@ -1,4 +1,4 @@
-export type SlideProperties = {text:string, imgURL:string};
+import { SlideProperties } from "./slide-data.js";
 
 export class SerializableSlideshow {
     protected dom: XMLDocument;
