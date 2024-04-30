@@ -3,6 +3,7 @@ import { SlideSection } from "./slide-section.js";
 import { SlideProperties } from "./slide-data.js";
 import { SerializableSlideshow } from "./serializer.js";
 import { openImgSelectDialog } from "./image-select.js";
+import { uploadXMLFile, downloadFile } from "./utility.js";
 
 
 
@@ -85,25 +86,6 @@ document.getElementById('ctrl-slideshow-name').addEventListener('click', (
 document.getElementById('ctrl-make-link').addEventListener('click', () => {
 });
 
-async function uploadXMLFile() : Promise<string>{
-  return new Promise((resolve,reject) => {
-    let input: HTMLInputElement = document.createElement('input');
-    input.type = 'file';
-    input.multiple = false;
-    input.accept = '.xml,application/xml';
-    input.onchange = () => {
-      let file: File = input.files[0];
-      console.log('file selected to load ', file);
-      if (file) {
-        resolve(file);
-      }
-      else {
-        reject('No file selected');
-      }
-    };
-    input.click();
-  }).then((file: File) => file.text());
-}
 
 document.getElementById('ctrl-import').addEventListener('click', async () => {
   try {
@@ -120,13 +102,7 @@ document.getElementById('ctrl-import').addEventListener('click', async () => {
   }
 });
 
-function downloadFile(uri: string, downloadName: string) {
-  let anchor = document.createElement('a');
-  anchor.href = uri;
-  anchor.download = downloadName;
-  anchor.click();
-  //seems to work even though not attached to DOM - watch for platforms where it fails
-}
+
 
 document.getElementById('ctrl-export').addEventListener('click', () => {
   const ss = new SerializableSlideshow();
