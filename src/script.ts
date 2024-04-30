@@ -66,10 +66,10 @@ class SlideElement extends HTMLElement {
 
 //INITIALIZATION
 
-window.customElements.define('slide-section', SlideElement, { extends: "section" });
+window.customElements.define('slide-section', SlideElement);
 
 const slidesCol = document.getElementById('slides');
-const slideSelector = 'section[is=slide-section]';
+const slideSelector = 'slide-section';
 const slideTemplate = (()=>{
   const initSlide = document.querySelector(slideSelector) as HTMLElement;
   let template = initSlide.cloneNode(true) as SlideElement;
