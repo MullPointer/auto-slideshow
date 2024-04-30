@@ -208,10 +208,11 @@ function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {t
   const templateElement = document.querySelector('#template-slide-section') as HTMLTemplateElement;
   const slideTemplate = templateElement.content.children[0] as SlideSection;
   const newSlide = slideTemplate.cloneNode(true) as SlideSection;
-  newSlide.slideProps = initial;
   slideIDCounter++;
   newSlide.id = "slide-" + slideIDCounter;
   slidesCol.insertBefore(newSlide, slideBefore);
+  newSlide.slideProps = initial;
+    //need to add element to DOM before it becomes custom element
 }
 
 function clearSlides() {
