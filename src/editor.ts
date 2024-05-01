@@ -83,9 +83,16 @@ document.getElementById('ctrl-slideshow-name').addEventListener('click', (
 
 });
 
-document.getElementById('ctrl-make-link').addEventListener('click', () => {
-});
 
+document.getElementById('ctrl-make-link').addEventListener('click', () => {
+  const xml = slideshowToXML();
+  const link = 'https://' + document.location.hostname 
+    + ':' + document.location.port 
+    + '/dist/player.html?data=' 
+    + encodeURIComponent(xml);
+    //TODO this should probably be set relative to current document path or be customisable
+  window.prompt('Shareable Link', link);
+});
 
 document.getElementById('ctrl-import').addEventListener('click', async () => {
   try {
@@ -103,20 +110,24 @@ document.getElementById('ctrl-import').addEventListener('click', async () => {
 });
 
 
-
 document.getElementById('ctrl-export').addEventListener('click', () => {
+  const xml = slideshowToXML();
+  const blob = new Blob([xml], {type:'application/xml'});
+  const uri = URL.createObjectURL(blob);
+  downloadFile(uri, 'slideshow.xml'); //TODO use slideshow name when added
+  URL.revokeObjectURL(uri);
+});
+
+
+function slideshowToXML() {
   const ss = new SerializableSlideshow();
   const slideEls = document.querySelectorAll(slideSelector);
   for (const slideNode of slideEls) {
     const slideEl = slideNode as SlideSection;
     ss.appendSlide(slideEl.slideProps);
   }
-  const output = ss.serialize();
-  const blob = new Blob([output], {type:'application/xml'});
-  const uri = URL.createObjectURL(blob);
-  downloadFile(uri, 'slideshow.xml'); //TODO use slideshow name when added
-  URL.revokeObjectURL(uri);
-});
+  return ss.serialize();
+}
 
 
 

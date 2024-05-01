@@ -40,3 +40,9 @@ export function downloadFile(uri: string, downloadName: string) {
     anchor.click();
     //seems to work even though not attached to DOM - watch for platforms where it fails
 }
+
+//from https://webdesign.tutsplus.com/best-ways-to-preload-images-using-javascript-css-and-html--cms-41329t
+export function preloadImage(imageURL) {
+    let img = new Image();
+    img.src = imageURL;
+}
