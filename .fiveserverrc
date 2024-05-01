@@ -3,6 +3,5 @@
   "root": "",
   "open": "dist/index.html",
   "browser": "chromium",
-  "https": true,
-  "remoteLogs": "true"
+  "https": true
 }
