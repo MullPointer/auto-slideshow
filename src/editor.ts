@@ -59,10 +59,13 @@ document.addEventListener('click', (
 });
 
 document.getElementById('ctrl-slideshow-name').addEventListener('click', (
-    event: PointerEvent & { target: HTMLInputElement }
+    event: PointerEvent & { currentTarget: HTMLInputElement }
   ) => {
-  const nameH = event.target as HTMLElement;
+  const nameButton = event.currentTarget as HTMLElement;
+  const nameH = nameButton.querySelector('h1') as HTMLElement;
   const currentName = nameH.textContent;
+
+  console.log('changing name');
   
   const nameChanger = document.createElement('input');
   for (const c of nameH.classList) {
@@ -83,6 +86,17 @@ document.getElementById('ctrl-slideshow-name').addEventListener('click', (
 
 });
 
+function getSlideshowName(): string {
+  const nameH = document.querySelector('#ctrl-slideshow-name h1') as HTMLElement;
+  console.log('got name header', nameH);
+  return nameH.textContent;
+}
+
+function setSlideshowName(name:string): void{
+  const nameH = document.querySelector('#ctrl-slideshow-name h1') as HTMLElement;
+  nameH.textContent = name;
+}
+
 
 document.getElementById('ctrl-make-link').addEventListener('click', () => {
   const xml = slideshowToXML();
@@ -98,10 +112,16 @@ document.getElementById('ctrl-import').addEventListener('click', async () => {
   try {
     const input = await uploadXMLFile();
     console.log('loading file ', input);
-    const ss = new SerializableSlideshow();
-    ss.deserialize(input);
+    const ss = new SerializableSlideshow(input);
     clearSlides();
     ss.mapSlides((props:SlideProperties) => addSlide(null,props));
+    if (ss.name) {
+      setSlideshowName(ss.name);
+    }
+    else {
+      setSlideshowName('Untitled');
+    }
+    
   }
   catch (e) {
     console.error(`Failed to load file `, e.message);
@@ -119,8 +139,9 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
 });
 
 
-function slideshowToXML() {
+function slideshowToXML(): string {
   const ss = new SerializableSlideshow();
+  ss.name = getSlideshowName();
   const slideEls = document.querySelectorAll(slideSelector);
   for (const slideNode of slideEls) {
     const slideEl = slideNode as SlideSection;

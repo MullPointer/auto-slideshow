@@ -25,6 +25,10 @@ if (params.has('data')) {
     const ss = new SerializableSlideshow();
     ss.deserialize(data);
     ss.mapSlides((props:SlideProperties) => slides.push(props));
+    
+    if (ss.name) {
+        document.getElementById('slideshow-name').textContent = ss.name;
+    }
 }
 
 for (const slide of slides) {

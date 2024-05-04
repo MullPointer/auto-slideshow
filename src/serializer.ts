@@ -3,8 +3,23 @@ import { SlideProperties } from "./slide-data.js";
 export class SerializableSlideshow {
     protected dom: XMLDocument;
 
-    constructor() {
+    constructor(xml:string = '') {
         this.dom = document.implementation.createDocument(null, 'slideshow');
+        if (xml !== '') {
+            this.deserialize(xml);
+        }
+    }
+
+    get name():string {
+        const slideshowNode = this.dom.documentElement;
+        return slideshowNode.getAttribute('name');
+    }
+
+    set name(newName:string) {
+        const slideshowNode = this.dom.documentElement;
+        const nameAttribute = document.createAttributeNS(null, "name");
+        nameAttribute.value = newName;
+        slideshowNode.attributes.setNamedItemNS(nameAttribute);
     }
 
 
