@@ -3,7 +3,7 @@ import { SlideSection } from "./slide-section.js";
 import { SlideProperties } from "./slide-data.js";
 import { SerializableSlideshow } from "./serializer.js";
 import { openImgSelectDialog } from "./image-select.js";
-import { uploadXMLFile, downloadFile } from "./utility.js";
+import { uploadXMLFile, downloadFile, makeFileName } from "./utility.js";
 
 
 
@@ -88,7 +88,6 @@ document.getElementById('ctrl-slideshow-name').addEventListener('click', (
 
 function getSlideshowName(): string {
   const nameH = document.querySelector('#ctrl-slideshow-name h1') as HTMLElement;
-  console.log('got name header', nameH);
   return nameH.textContent;
 }
 
@@ -138,7 +137,8 @@ document.getElementById('ctrl-export').addEventListener('click', () => {
   const xml = slideshowToXML();
   const blob = new Blob([xml], {type:'application/xml'});
   const uri = URL.createObjectURL(blob);
-  downloadFile(uri, 'slideshow.xml'); //TODO use slideshow name when added
+  const fileName = makeFileName(getSlideshowName(),'slideshow');
+  downloadFile(uri, fileName + '.xml');
   URL.revokeObjectURL(uri);
 });
 

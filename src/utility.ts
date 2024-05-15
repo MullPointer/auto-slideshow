@@ -13,6 +13,25 @@ export function isValidHttpUrl(s: string) {
     return url.protocol === "http:" || url.protocol === "https:";
 }
 
+export function makeFileName(s:string, defaultName:string): string {
+    //referring to https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
+    s = s.replaceAll(/\<\>\:\"\/\\\|\?\*/g,''); //characters not allowed on Windows
+    s = s.replaceAll(/[\x00-\x1F]/g, ''); //non-printing characters
+    s = s.replaceAll(/[\W\.]+$/g, ''); //trailing dots and spaces
+    s = s.replace(/(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[1-9]$)|(^LPT[1-9]$)/i, ''); //full names disallowed on Windows
+    s = s.replaceAll(' ', '-');
+    s = s.toLocaleLowerCase();
+    if (s === '') {
+        return defaultName;
+    }
+    else {
+        return s;
+    }
+}
+
+
+
+
 export async function uploadXMLFile() : Promise<string>{
     return new Promise((resolve,reject) => {
         let input: HTMLInputElement = document.createElement('input');
