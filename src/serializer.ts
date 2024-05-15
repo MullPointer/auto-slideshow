@@ -1,4 +1,5 @@
 import { SlideProperties } from "./slide-data.js";
+import { isValidImgURL } from "./slide-data.js";
 
 export class SerializableSlideshow {
     protected dom: XMLDocument;
@@ -22,12 +23,21 @@ export class SerializableSlideshow {
         slideshowNode.attributes.setNamedItemNS(nameAttribute);
     }
 
+    //throws URIError if not valid
+    validateImgURL(imgURL:string):void {
+        if (!isValidImgURL(imgURL)) {
+            const message = 'Unapproved URL used for image ' + imgURL;
+            console.error(message);
+            throw URIError(message);
+        }
+    }
 
     appendSlide(slide: SlideProperties) {
         const slideshowNode = this.dom.documentElement;
         const slideNode = document.createElementNS(null, "slide");
 
         const imgAttribute = document.createAttributeNS(null, "image");
+        this.validateImgURL(slide.imgURL);
         imgAttribute.value = slide.imgURL;
         slideNode.attributes.setNamedItemNS(imgAttribute);
         
@@ -43,6 +53,7 @@ export class SerializableSlideshow {
         for (const slide of slides) {
             const text = slide.textContent;
             const imgURL = slide.getAttribute('image');
+            this.validateImgURL(imgURL);
             slideMappingCallback({
                 text: (text || ''),
                 imgURL: (imgURL || '')

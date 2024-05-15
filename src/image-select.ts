@@ -1,4 +1,4 @@
-import { isValidHttpUrl } from "./utility.js";
+import { isValidImgURL } from "./slide-data.js";
 
 
 const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
@@ -35,7 +35,7 @@ document.getElementById('image-select').addEventListener('click', (
   switch(event.target.dataset.ctrl) {
     case 'ok':
       const url = imgSelectURL.value;
-      if (isValidHttpUrl(url)) {
+      if (isValidImgURL(url)) {
         onSelectionCallback(url);
         onSelectionCallback = null;
         imgSelectDialog.close();
