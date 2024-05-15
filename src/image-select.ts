@@ -5,10 +5,17 @@ const imgSelectDialog = document.getElementById('image-select') as HTMLDialogEle
 const imgSelectDialogForm = document.querySelector('#image-select form') as HTMLFormElement;
 const imgSelectGallery = document.getElementById('image-select-gallery') as HTMLFieldSetElement;
 const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
-const imgGalleryURL = '/images/image-index.json';
-const imgGalleryRecords = await (async () => {
+const imgGalleryURL = 'images/image-index.json';
+let imgGalleryRecords = null;
+
+(async () => { //initialization
   const response = await fetch(imgGalleryURL);
-  return await response.json();
+  if (response.ok) {
+    imgGalleryRecords = await response.json();
+  }
+  else {
+    console.error('Fetching image gallery failed with response: ', response);
+  }
 })();
 
 let onSelectionCallback: (selectedURL:string) => void;
@@ -19,29 +26,36 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
 
     imgSelectGallery.innerHTML = ''; //clear existing children
 
-    for (const galRecord of imgGalleryRecords) {
-      console.log('Image gallery item', galRecord);
-      const inputEl = document.createElement('input');
-      const imgEl = document.createElement('img');
-      const labelEl = document.createElement('label');
-      labelEl.className = imgSelectGallery.dataset.classForLabel;
-      inputEl.type = 'radio';
-      inputEl.name = 'imageGallerySelect';
-      inputEl.value = galRecord['URL'];
-      inputEl.className = 'sr-only';
-      imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
-      imgEl.src = galRecord['URL'];
-      imgEl.className = imgSelectGallery.dataset.classForImg;
-      labelEl.appendChild(inputEl);
-      labelEl.appendChild(imgEl);
-      imgSelectGallery.appendChild(labelEl);
+    if (imgGalleryRecords) {
+      for (const galRecord of imgGalleryRecords) {
+        console.log('Image gallery item', galRecord);
+        const inputEl = document.createElement('input');
+        const imgEl = document.createElement('img');
+        const labelEl = document.createElement('label');
+        labelEl.className = imgSelectGallery.dataset.classForLabel;
+        inputEl.type = 'radio';
+        inputEl.name = 'imageGallerySelect';
+        inputEl.value = galRecord['URL'];
+        inputEl.className = 'sr-only';
+        imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
+        imgEl.src = galRecord['URL'];
+        imgEl.className = imgSelectGallery.dataset.classForImg;
+        labelEl.appendChild(inputEl);
+        labelEl.appendChild(imgEl);
+        imgSelectGallery.appendChild(labelEl);
 
-      if (galRecord['URL'] === initialURL) {
-        inputEl.checked = true;
+        if (galRecord['URL'] === initialURL) {
+          inputEl.checked = true;
+        }
       }
+
+      setImgSelectError('');
+    }
+    else {
+      setImgSelectError('Image gallery not loaded. Please try again.');
     }
 
-    setImgSelectError('');
+    
 
 
     imgSelectDialog.showModal();

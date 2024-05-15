@@ -100,12 +100,16 @@ function setSlideshowName(name:string): void{
 
 document.getElementById('ctrl-make-link').addEventListener('click', () => {
   const xml = slideshowToXML();
-  const link = 'https://' + document.location.hostname 
-    + ':' + document.location.port 
-    + '/dist/player.html?data=' 
-    + encodeURIComponent(xml);
-    //TODO this should probably be set relative to current document path or be customisable
-  window.prompt('Shareable Link', link);
+  const urlPath = window.location.href.match(/^.+\//);
+  if (urlPath) {
+    const link = urlPath[0]
+      + 'player.html?data=' 
+      + encodeURIComponent(xml);
+    window.prompt('Shareable Link', link);
+  }
+  else {
+    console.error('Could not find path from current page path', window.location.href);
+  }
 });
 
 document.getElementById('ctrl-import').addEventListener('click', async () => {
