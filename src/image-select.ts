@@ -2,16 +2,48 @@ import { isValidImgURL } from "./slide-data.js";
 
 
 const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
-const imgSelectURL = document.getElementById('image-select-URL') as HTMLInputElement;
+const imgSelectDialogForm = document.querySelector('#image-select form') as HTMLFormElement;
+const imgSelectGallery = document.getElementById('image-select-gallery') as HTMLFieldSetElement;
 const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
+const imgGalleryURL = '/images/image-index.json';
+const imgGalleryRecords = await (async () => {
+  const response = await fetch(imgGalleryURL);
+  return await response.json();
+})();
 
 let onSelectionCallback: (selectedURL:string) => void;
 
 
 export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL:string) => void) {
     onSelectionCallback = onSelection;
-    imgSelectURL.value = initialURL;
+
+    imgSelectGallery.innerHTML = ''; //clear existing children
+
+    for (const galRecord of imgGalleryRecords) {
+      console.log('Image gallery item', galRecord);
+      const inputEl = document.createElement('input');
+      const imgEl = document.createElement('img');
+      const labelEl = document.createElement('label');
+      labelEl.className = imgSelectGallery.dataset.classForLabel;
+      inputEl.type = 'radio';
+      inputEl.name = 'imageGallerySelect';
+      inputEl.value = galRecord['URL'];
+      inputEl.className = 'sr-only';
+      imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
+      imgEl.src = galRecord['URL'];
+      imgEl.className = imgSelectGallery.dataset.classForImg;
+      labelEl.appendChild(inputEl);
+      labelEl.appendChild(imgEl);
+      imgSelectGallery.appendChild(labelEl);
+
+      if (galRecord['URL'] === initialURL) {
+        inputEl.checked = true;
+      }
+    }
+
     setImgSelectError('');
+
+
     imgSelectDialog.showModal();
   };
 
@@ -34,7 +66,7 @@ document.getElementById('image-select').addEventListener('click', (
   
   switch(event.target.dataset.ctrl) {
     case 'ok':
-      const url = imgSelectURL.value;
+      const url = imgSelectDialogForm.imageGallerySelect.value;
       if (isValidImgURL(url)) {
         onSelectionCallback(url);
         onSelectionCallback = null;

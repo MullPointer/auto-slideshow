@@ -50,18 +50,22 @@
       
     </header>
     <hr>
-    <dialog id="image-select" class="fixed p-4 border-4 rounded-md border-blue-900 w-1/2 min-w-96 max-w-xl">
-      <h2>Select an image</h2>
-      <label class="block my-4">
-        URL:
-        <input id="image-select-URL" type="text" class="m-1 p-2 border rounded-md border-blue-300" required auto-focus></input>
+    <dialog id="image-select" class="fixed p-4 border-4 rounded-md border-blue-900 w-11/12 min-w-96 max-w-6xl">
+      <form form method="dialog">
+        <h2>Select an image</h2>
+        <fieldset 
+          id="image-select-gallery" 
+          class="flex flex-wrap flex-none gap-1" 
+          data-class-for-label="block border-4 rounded-md border-blue-300 has-[:checked]:border-green-300 "
+          data-class-for-img="overflow-hidden w-52 aspect-video object-contain object-center"
+          required auto-focus>
+        </fieldset>
         <em id="image-select-URL-error" class="hidden m-1 text-red-700"></em>
-      </label>
-      <img id="image-select-preview" referrerpolicy="no-referrer">
-      <div class="flex flex-row justify-around mt-4">
-        <button data-ctrl="ok" class="w-16 m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">OK</button>
-        <button data-ctrl="cancel" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Cancel</button>
-      </div>
+        <div class="flex flex-row justify-around mt-4">
+          <button data-ctrl="ok" class="w-16 m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">OK</button>
+          <button data-ctrl="cancel" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Cancel</button>
+        </div>
+      </form>
     </dialog>
 
     <main class="max-w-5xl">
