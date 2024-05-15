@@ -5,6 +5,7 @@ const imgSelectDialog = document.getElementById('image-select') as HTMLDialogEle
 const imgSelectDialogForm = document.querySelector('#image-select form') as HTMLFormElement;
 const imgSelectGallery = document.getElementById('image-select-gallery') as HTMLFieldSetElement;
 const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
+const imgSelectCreditEl = document.getElementById('image-select-credit') as HTMLElement;
 const imgGalleryURL = 'images/image-index.json';
 let imgGalleryRecords = null;
 
@@ -28,7 +29,6 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
 
     if (imgGalleryRecords) {
       for (const galRecord of imgGalleryRecords) {
-        console.log('Image gallery item', galRecord);
         const inputEl = document.createElement('input');
         const imgEl = document.createElement('img');
         const labelEl = document.createElement('label');
@@ -38,11 +38,13 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
         inputEl.value = galRecord['URL'];
         inputEl.className = 'sr-only';
         imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
-        imgEl.src = galRecord['URL'];
+        imgEl.src = galRecord['Thumbnail'];
+        imgEl.alt = galRecord['Alt'];
         imgEl.className = imgSelectGallery.dataset.classForImg;
         labelEl.appendChild(inputEl);
         labelEl.appendChild(imgEl);
         imgSelectGallery.appendChild(labelEl);
+        setImgCredit(galRecord['URL']);
 
         if (galRecord['URL'] === initialURL) {
           inputEl.checked = true;
@@ -73,6 +75,24 @@ function setImgSelectError(errorMessage: string) {
   }
 }
 
+function setImgCredit(imgURL: string) {
+  let galRecord = null;
+  if (imgGalleryRecords) {
+    galRecord = imgGalleryRecords.find((r) => r['URL'] === imgURL);
+  }
+  
+  if (galRecord) {
+    imgSelectCreditEl.classList.remove('hidden');
+    imgSelectCreditEl.innerHTML = `Selected image by <a href="${galRecord['Original Link']}" target='_blank' class='underline'>${galRecord['Creator']}</a>`
+  }
+  else
+  {
+    imgSelectCreditEl.classList.add('hidden');
+    imgSelectCreditEl.innerHTML = '';
+  }
+}
+
+
 
 document.getElementById('image-select').addEventListener('click', (
   event: PointerEvent & { target: HTMLDialogElement}
@@ -95,4 +115,8 @@ document.getElementById('image-select').addEventListener('click', (
       imgSelectDialog.close();
       break;
   }
+});
+
+document.getElementById('image-select').addEventListener('change', () => {
+  setImgCredit(imgSelectDialogForm.imageGallerySelect.value);
 });
