@@ -1,9 +1,23 @@
 {
-    "compilerOptions": {
-      "target": "ESNext", /*Need ESNext for wicg-file-system-access dependency of mp4-muxer to work*/
-      "module": "ESNext",
-      "sourceMap": true,
-      "outDir": "dist",
-      "moduleResolution":"bundler"
-    }
-  }
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Linting */
+    /*"strict": true,*/
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
