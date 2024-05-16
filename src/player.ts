@@ -11,7 +11,7 @@ const slideLingerAfterSpeaking = 500;
 
 const params = new URLSearchParams(window.location.search);
 const slides:SlideProperties[] = new Array();
-let currentUtterance:SpeechSynthesisUtterance = null;
+let currentUtterance:SpeechSynthesisUtterance | null = null;
 let currentSlide = -1;
 
 
@@ -19,7 +19,7 @@ let currentSlide = -1;
 
 
 if (params.has('data')) {
-    const data = params.get('data');
+    const data = params.get('data')!;
     console.log('loading slideshow ', data);
 
     const ss = new SerializableSlideshow();
@@ -27,7 +27,7 @@ if (params.has('data')) {
     ss.mapSlides((props:SlideProperties) => slides.push(props));
     
     if (ss.name) {
-        document.getElementById('slideshow-name').textContent = ss.name;
+        document.getElementById('slideshow-name')!.textContent = ss.name;
     }
 }
 
@@ -37,13 +37,13 @@ for (const slide of slides) {
 }
 
 function showPlayer() {
-    document.getElementById('intro').classList.add('hidden');
-    document.getElementById('player').classList.remove('hidden');
+    document.getElementById('intro')!.classList.add('hidden');
+    document.getElementById('player')!.classList.remove('hidden');
 }
 
 function showIntro() {
-    document.getElementById('player').classList.add('hidden');
-    document.getElementById('intro').classList.remove('hidden');
+    document.getElementById('player')!.classList.add('hidden');
+    document.getElementById('intro')!.classList.remove('hidden');
 }
 
 
@@ -128,6 +128,6 @@ async function advanceSlide() {
 }
 
 
-document.getElementById('ctrl-start-slideshow').addEventListener('click', async () => {
+document.getElementById('ctrl-start-slideshow')!.addEventListener('click', async () => {
     advanceSlide();
 });

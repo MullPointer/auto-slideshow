@@ -1,13 +1,13 @@
 import { isValidImgURL } from "./slide-data.js";
 
 
-const imgSelectDialog = document.getElementById('image-select') as HTMLDialogElement;
-const imgSelectDialogForm = document.querySelector('#image-select form') as HTMLFormElement;
-const imgSelectGallery = document.getElementById('image-select-gallery') as HTMLFieldSetElement;
-const imgSelectURLErrorEl = document.getElementById('image-select-URL-error') as HTMLElement;
-const imgSelectCreditEl = document.getElementById('image-select-credit') as HTMLElement;
+const imgSelectDialog = document.getElementById('image-select')! as HTMLDialogElement;
+const imgSelectDialogForm = document.querySelector('#image-select form')! as HTMLFormElement;
+const imgSelectGallery = document.getElementById('image-select-gallery')! as HTMLFieldSetElement;
+const imgSelectURLErrorEl = document.getElementById('image-select-URL-error')! as HTMLElement;
+const imgSelectCreditEl = document.getElementById('image-select-credit')! as HTMLElement;
 const imgGalleryURL = 'images/image-index.json';
-let imgGalleryRecords = null;
+let imgGalleryRecords:[]|null = null;
 
 (async () => { //initialization
   const response = await fetch(imgGalleryURL);
@@ -19,20 +19,21 @@ let imgGalleryRecords = null;
   }
 })();
 
-let onSelectionCallback: (selectedURL:string) => void;
+let onSelectionCallback: (((selectedURL:string) => void) | null) = null;
 
 
 export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL:string) => void) {
     onSelectionCallback = onSelection;
 
     imgSelectGallery.innerHTML = ''; //clear existing children
+    setImgCredit(null);
 
     if (imgGalleryRecords) {
       for (const galRecord of imgGalleryRecords) {
         const inputEl = document.createElement('input');
         const imgEl = document.createElement('img');
         const labelEl = document.createElement('label');
-        labelEl.className = imgSelectGallery.dataset.classForLabel;
+        labelEl.className = imgSelectGallery.dataset.classForLabel || '';
         inputEl.type = 'radio';
         inputEl.name = 'imageGallerySelect';
         inputEl.value = galRecord['URL'];
@@ -40,7 +41,7 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
         imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
         imgEl.src = galRecord['Thumbnail'];
         imgEl.alt = galRecord['Alt'];
-        imgEl.className = imgSelectGallery.dataset.classForImg;
+        imgEl.className = imgSelectGallery.dataset.classForImg || '';
         labelEl.appendChild(inputEl);
         labelEl.appendChild(imgEl);
         imgSelectGallery.appendChild(labelEl);
@@ -48,9 +49,6 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
         if (galRecord['URL'] === initialURL) {
           inputEl.checked = true;
           setImgCredit(galRecord['URL']);
-        }
-        else {
-          setImgCredit(null);
         }
       }
 
@@ -78,7 +76,7 @@ function setImgSelectError(errorMessage: string) {
   }
 }
 
-function setImgCredit(imgURL: string) {
+function setImgCredit(imgURL: string | null) {
   let galRecord = null;
   if (imgGalleryRecords) {
     galRecord = imgGalleryRecords.find((r) => r['URL'] === imgURL);
@@ -97,16 +95,18 @@ function setImgCredit(imgURL: string) {
 
 
 
-document.getElementById('image-select').addEventListener('click', (
-  event: PointerEvent & { target: HTMLDialogElement}
+document.getElementById('image-select')!.addEventListener('click', (
+  event: MouseEvent
   ) => {
-  
-  switch(event.target.dataset.ctrl) {
+  const target = event.target as HTMLDialogElement;
+  switch(target.dataset.ctrl) {
     case 'ok':
       const url = imgSelectDialogForm.imageGallerySelect.value;
       if (isValidImgURL(url)) {
-        onSelectionCallback(url);
-        onSelectionCallback = null;
+        if (onSelectionCallback) {
+          onSelectionCallback(url);
+          onSelectionCallback = null;
+        }
         imgSelectDialog.close();
       }
       else {
@@ -114,12 +114,11 @@ document.getElementById('image-select').addEventListener('click', (
       };
       break;
     case 'cancel':
-      imgSelectDialog.dataset.targetSlide = null;
       imgSelectDialog.close();
       break;
   }
 });
 
-document.getElementById('image-select').addEventListener('change', () => {
+document.getElementById('image-select')!.addEventListener('change', () => {
   setImgCredit(imgSelectDialogForm.imageGallerySelect.value);
 });

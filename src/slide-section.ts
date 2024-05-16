@@ -8,10 +8,10 @@ export class SlideSection extends HTMLElement {
     private _imgURL = "";
   
     get slideText() {
-      return this.querySelector('textarea').value;
+      return this.querySelector('textarea')!.value;
     }
     set slideText(value) {
-      this.querySelector('textarea').value = value;
+      this.querySelector('textarea')!.value = value;
     }
   
     get imgURL() {
@@ -33,7 +33,7 @@ export class SlideSection extends HTMLElement {
       this.imgURL = props.imgURL;
     }
   
-    nextSlide() : SlideSection {
+    nextSlide() : SlideSection | null {
       let checkNode = this.nextElementSibling ;
       while (checkNode instanceof HTMLElement && checkNode)
       {
@@ -47,7 +47,7 @@ export class SlideSection extends HTMLElement {
       return null;
     }
   
-    previousSlide() : SlideSection {
+    previousSlide() : SlideSection | null {
       let checkNode = this.previousElementSibling;
       while (checkNode instanceof HTMLElement && checkNode)
       {

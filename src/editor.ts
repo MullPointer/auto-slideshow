@@ -9,7 +9,7 @@ import { uploadXMLFile, downloadFile, makeFileName } from "./utility.js";
 
 //INITIALIZATION
 
-const slidesCol = document.getElementById('slides');
+const slidesCol = document.getElementById('slides')!;
 const slideSelector = 'slide-section';
 let slideIDCounter = 0;
 
@@ -50,20 +50,17 @@ mainMenu.addEventListener('keyup', (e:KeyboardEvent) => {
 });
 
 //close menu if click outside of nav
-document.addEventListener('click', (
-  e:PointerEvent & { target: HTMLElement}
-  ) => {
-  if ( !e.target.closest('#main-menu') ) {
+document.addEventListener('click', (e:MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if ( !target.closest('#main-menu') ) {
     closeMainMenu();
   }
 });
 
-document.getElementById('ctrl-slideshow-name').addEventListener('click', (
-    event: PointerEvent & { currentTarget: HTMLInputElement }
-  ) => {
-  const nameButton = event.currentTarget as HTMLElement;
+document.getElementById('ctrl-slideshow-name')!.addEventListener('click', (e:MouseEvent) => {
+  const nameButton = e.currentTarget as HTMLElement;
   const nameH = nameButton.querySelector('h1') as HTMLElement;
-  const currentName = nameH.textContent;
+  const currentName = nameH.textContent!;
 
   console.log('changing name');
   
@@ -88,7 +85,7 @@ document.getElementById('ctrl-slideshow-name').addEventListener('click', (
 
 function getSlideshowName(): string {
   const nameH = document.querySelector('#ctrl-slideshow-name h1') as HTMLElement;
-  return nameH.textContent;
+  return nameH.textContent!;
 }
 
 function setSlideshowName(name:string): void{
@@ -97,7 +94,7 @@ function setSlideshowName(name:string): void{
 }
 
 
-document.getElementById('ctrl-make-link').addEventListener('click', () => {
+document.getElementById('ctrl-make-link')!.addEventListener('click', () => {
   const xml = slideshowToXML();
   const urlPath = window.location.href.match(/^.+\//);
   if (urlPath) {
@@ -111,7 +108,7 @@ document.getElementById('ctrl-make-link').addEventListener('click', () => {
   }
 });
 
-document.getElementById('ctrl-import').addEventListener('click', async () => {
+document.getElementById('ctrl-import')!.addEventListener('click', async () => {
   try {
     const input = await uploadXMLFile();
     console.log('loading file ', input);
@@ -127,13 +124,14 @@ document.getElementById('ctrl-import').addEventListener('click', async () => {
     
   }
   catch (e) {
-    console.error(`Failed to load file `, e.message);
+    const message = (e instanceof Error)? e.message : e;
+    console.error(`Failed to load file `, message);
     window.alert('Failed to load slideshow. Please confirm this is a valid slideshow file.');
   }
 });
 
 
-document.getElementById('ctrl-export').addEventListener('click', () => {
+document.getElementById('ctrl-export')!.addEventListener('click', () => {
   const xml = slideshowToXML();
   const blob = new Blob([xml], {type:'application/xml'});
   const uri = URL.createObjectURL(blob);
@@ -162,14 +160,13 @@ function slideshowToXML(): string {
 
 //SLIDE CONTROLS
 //TODO - encapusulate more of these into slide-section component
-document.getElementById('slides').addEventListener('click', (
-  event: PointerEvent & { target: HTMLInputElement }
-  ) => {
-  const currentSlide = event.target.closest(slideSelector) as SlideSection;
-  console.log('control event ', event.target.dataset.ctrl);
-  let target: SlideSection;
-  let nextSlide: SlideSection;
-  switch(event.target.dataset.ctrl) {
+document.getElementById('slides')!.addEventListener('click', (event: MouseEvent) => {
+  const clickedButton = event.target as HTMLElement;
+  const currentSlide = clickedButton.closest(slideSelector) as SlideSection;
+  console.log('control event ', clickedButton.dataset.ctrl);
+  let target: SlideSection | null;
+  let nextSlide: SlideSection | null;
+  switch(clickedButton.dataset.ctrl) {
     case 'img':
       openImgSelectDialog(currentSlide.imgURL, (selectedURL:string) => {
           currentSlide.imgURL = selectedURL;
@@ -189,7 +186,7 @@ document.getElementById('slides').addEventListener('click', (
     case 'split':
       target = currentSlide.nextSlide();
       const currentText = currentSlide.slideText;
-      const cursorPos = currentSlide.querySelector('textarea').selectionStart;
+      const cursorPos = currentSlide.querySelector('textarea')!.selectionStart;
       currentSlide.slideText = currentText.substring(0,cursorPos);
       const newText = currentText.substring(cursorPos);
       addSlide(target, {
@@ -211,12 +208,12 @@ document.getElementById('slides').addEventListener('click', (
   
 });
 
-document.getElementById('ctrl-add-slide').addEventListener('click', () => {
+document.getElementById('ctrl-add-slide')!.addEventListener('click', () => {
   addSlide();
 });
 
 
-function addSlide(slideBefore: HTMLElement = null, initial: SlideProperties = {text:"",imgURL:""}) {
+function addSlide(slideBefore: (HTMLElement | null) = null, initial: SlideProperties = {text:"",imgURL:""}) {
   const templateElement = document.querySelector('#template-slide-section') as HTMLTemplateElement;
   const slideTemplate = templateElement.content.children[0] as SlideSection;
   const newSlide = slideTemplate.cloneNode(true) as SlideSection;

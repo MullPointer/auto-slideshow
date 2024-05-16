@@ -33,13 +33,13 @@ export function makeFileName(s:string, defaultName:string): string {
 
 
 export async function uploadXMLFile() : Promise<string>{
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve:((value: File) => void),reject:((value: string) => void)) => {
         let input: HTMLInputElement = document.createElement('input');
         input.type = 'file';
         input.multiple = false;
         input.accept = '.xml,application/xml';
         input.onchange = () => {
-        let file: File = input.files[0];
+        let file: File = input.files![0];
         console.log('file selected to load ', file);
         if (file) {
             resolve(file);
@@ -49,7 +49,7 @@ export async function uploadXMLFile() : Promise<string>{
         }
         };
         input.click();
-    }).then((file: File) => file.text());
+    }).then((value: File) => value.text());
 }
 
 export function downloadFile(uri: string, downloadName: string) {
@@ -61,7 +61,7 @@ export function downloadFile(uri: string, downloadName: string) {
 }
 
 //from https://webdesign.tutsplus.com/best-ways-to-preload-images-using-javascript-css-and-html--cms-41329t
-export function preloadImage(imageURL) {
+export function preloadImage(imageURL: string) {
     let img = new Image();
     img.src = imageURL;
 }

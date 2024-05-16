@@ -13,7 +13,7 @@ export class SerializableSlideshow {
 
     get name():string {
         const slideshowNode = this.dom.documentElement;
-        return slideshowNode.getAttribute('name');
+        return slideshowNode.getAttribute('name') || '';
     }
 
     set name(newName:string) {
@@ -52,7 +52,7 @@ export class SerializableSlideshow {
         const slides = this.dom.documentElement.children;
         for (const slide of slides) {
             const text = slide.textContent;
-            const imgURL = slide.getAttribute('image');
+            const imgURL = slide.getAttribute('image') || '';
             this.validateImgURL(imgURL);
             slideMappingCallback({
                 text: (text || ''),
