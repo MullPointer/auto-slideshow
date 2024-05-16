@@ -44,10 +44,13 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
         labelEl.appendChild(inputEl);
         labelEl.appendChild(imgEl);
         imgSelectGallery.appendChild(labelEl);
-        setImgCredit(galRecord['URL']);
-
+        
         if (galRecord['URL'] === initialURL) {
           inputEl.checked = true;
+          setImgCredit(galRecord['URL']);
+        }
+        else {
+          setImgCredit(null);
         }
       }
 
