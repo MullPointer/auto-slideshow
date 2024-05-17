@@ -85,8 +85,7 @@
           >
           </button>
           <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-500"></textarea>
-          <div class="flex sm:flex-row md:flex-col justify-evenly m-1">
-            <!--TODO - fix breakpoints for controlling layout direction when padding etc decided-->
+          <div class="flex-row [@media(min-width:50rem)]:flex-col flex justify-evenly m-1">
             <button data-ctrl="up" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" >Move Up</button>
             <button data-ctrl="down" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Move Down</button>
             <button data-ctrl="split" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Split</button>
