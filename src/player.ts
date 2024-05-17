@@ -7,11 +7,11 @@ import { preloadImage } from "./utility.js";
 
 
 const slideTimeoutIfNoText = 5000;
-const slideLingerAfterSpeaking = 500;
+const slideLingerAfterSpeaking = 1000;
 
 const params = new URLSearchParams(window.location.search);
 const slides:SlideProperties[] = new Array();
-let currentUtterance:SpeechSynthesisUtterance | null = null;
+let currentUtterance:(SpeechSynthesisUtterance | null) = null;
 let currentSlide = -1;
 
 
@@ -59,6 +59,7 @@ async function speak(text:string): Promise<void> {
 
         console.log('speaking: ', text);
         currentUtterance = new SpeechSynthesisUtterance(text);
+        currentUtterance.rate = 0.5;
         currentUtterance.onerror = (e) => {
             console.error('error in speech synthesis: ', e.error);
             currentUtterance = null;
