@@ -18,8 +18,8 @@ export function makeFileName(s:string, defaultName:string): string {
     s = s.replace(/\<\>\:\"\/\\\|\?\*/g,''); //characters not allowed on Windows
     s = s.replace(/[\x00-\x1F]/g, ''); //non-printing characters
     s = s.replace(/[\W\.]+$/g, ''); //trailing dots and spaces
-    s = s.replace(/(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[1-9]$)|(^LPT[1-9]$)/i, ''); //full names disallowed on Windows
     s = s.replace(/ /g, '-');
+    s = s.replace(/(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[1-9]$)|(^LPT[1-9]$)/i, ''); //full names disallowed on Windows
     s = s.toLocaleLowerCase();
     if (s === '') {
         return defaultName;
