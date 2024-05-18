@@ -34,6 +34,9 @@
             <li class="block border-2 border-b-0 last:border-2 border-blue-500 bg-white hover:bg-blue-300">
               <button id="ctrl-export" class="w-full p-3 text-left">Save to Slideshow File</button>
             </li>
+            <li class="block border-2 border-b-0 last:border-2 border-blue-500 bg-white hover:bg-blue-300">
+              <button id="ctrl-about" class="w-full p-3 text-left">About</button>
+            </li>
           </ul>
         </nav>
 
@@ -60,6 +63,22 @@
           <button data-ctrl="ok" class="w-16 m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">OK</button>
           <button data-ctrl="cancel" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Cancel</button>
         </div>
+      </form>
+    </dialog>
+    <dialog id="about" class="fixed p-6 border-4 rounded-md border-blue-900 w-11/12 max-w-4xl">
+      <form form method="dialog">
+        <div class="my-2">
+          <img src="/icons/icon.png" alt="Auto Slideshow Editor" class="w-16 h-16 inline" />
+          <h2 class="inline text-lg">Auto Slideshow</h2>
+        </div>
+        <p class="my-2">For communicating written information using a simple slideshow, 
+          automatically read aloud to the recipient. 
+        </p>
+        <p class="my-2">
+          <a href="https://github.com/MullPointer/auto-slideshow" class="underline" target="_blank">Source code available</a>
+        </p>
+        <pre id="license" class="h-72 overflow-y-scroll whitespace-pre-wrap my-4"></pre>
+        <button class="w-16 m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" autofocus>OK</button>
       </form>
     </dialog>
 

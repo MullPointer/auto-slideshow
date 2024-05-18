@@ -160,6 +160,23 @@ document.getElementById('ctrl-export')!.addEventListener('click', () => {
   URL.revokeObjectURL(uri);
 });
 
+document.getElementById('ctrl-about')!.addEventListener('click', () => {
+  const aboutDialog = document.getElementById('about')! as HTMLDialogElement;
+  if (document.getElementById('license')!.textContent === '') {
+    //asynchronously fetch license text if not already set
+    setTimeout(async () => {
+      const response = await fetch('LICENSE');
+      if (response.ok) {
+        const licenseText = await response.text();
+        document.getElementById('license')!.textContent = licenseText;
+      }
+      else {
+        console.error('Fetching license failed with response: ', response);
+      }
+    });
+  }
+  aboutDialog.showModal();
+});
 
 function slideshowToXML(): string {
   const ss = new SerializableSlideshow();
