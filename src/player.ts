@@ -150,3 +150,7 @@ async function advanceSlide() {
 document.getElementById('ctrl-start-slideshow')!.addEventListener('click', async () => {
     advanceSlide();
 });
+
+document.getElementById('ctrl-about')!.addEventListener('click', () => {
+    document.getElementById('section-about')!.classList.toggle('hidden');
+});
