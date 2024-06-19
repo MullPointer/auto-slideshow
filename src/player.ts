@@ -39,12 +39,14 @@ for (const slide of slides) {
 
 function showPlayer() {
     document.getElementById('intro')!.classList.add('hidden');
+    document.getElementById('about')!.classList.add('hidden');
     document.getElementById('player')!.classList.remove('hidden');
 }
 
 function showIntro() {
     document.getElementById('player')!.classList.add('hidden');
     document.getElementById('intro')!.classList.remove('hidden');
+    document.getElementById('about')!.classList.remove('hidden');
 }
 
 
@@ -135,5 +137,5 @@ document.getElementById('ctrl-start-slideshow')!.addEventListener('click', async
 });
 
 document.getElementById('ctrl-about')!.addEventListener('click', () => {
-    document.getElementById('section-about')!.classList.toggle('hidden');
+    document.getElementById('about-details')!.classList.toggle('hidden');
 });
