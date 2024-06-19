@@ -77,7 +77,7 @@ async function speak(text:string): Promise<void> {
 
         console.log('speaking: ', text);
         currentUtterance = new SpeechSynthesisUtterance(text);
-        currentUtterance.rate = 0.5;
+        currentUtterance.rate = 0.7;
         currentUtterance.onerror = (e) => {
             console.error('error in speech synthesis: ', e.error);
             currentUtterance = null;
