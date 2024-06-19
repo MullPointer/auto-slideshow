@@ -96,19 +96,30 @@ function setSlideshowName(name:string): void{
 }
 
 
+document.getElementById('ctrl-watch')!.addEventListener('click', () => {
+  const link = makeSlideshowLink();
+  window.open(link, '_blank');
+});
+
 document.getElementById('ctrl-make-link')!.addEventListener('click', () => {
+  const link = makeSlideshowLink();
+  window.prompt('Shareable Link', link);
+});
+
+
+function makeSlideshowLink(): string {
   const xml = slideshowToXML();
   const urlPath = window.location.href.match(/^.+\//);
   if (urlPath) {
-    const link = urlPath[0]
+    return urlPath[0]
       + 'player.html?data=' 
       + encodeURIComponent(xml);
-    window.prompt('Shareable Link', link);
   }
   else {
     console.error('Could not find path from current page path', window.location.href);
+    throw URIError('Could not find path from current page path');
   }
-});
+}
 
 document.getElementById('ctrl-import')!.addEventListener('click', async () => {
   try {
