@@ -20,10 +20,10 @@ let imgGalleryRecords:[]|null = null;
   }
 })();
 
-let onSelectionCallback: (((selectedURL:string) => void) | null) = null;
+let onSelectionCallback: (((selectedURL:string, altText:string) => void) | null) = null;
 
 
-export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL:string) => void) {
+export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL:string, altText:string) => void) {
     onSelectionCallback = onSelection;
 
     imgSelectGallery.innerHTML = ''; //clear existing children
@@ -33,6 +33,7 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
       for (const galRecord of imgGalleryRecords) {
         const inputEl = document.createElement('input');
         const imgEl = document.createElement('img');
+        const altEl = document.createElement('p');
         const labelEl = document.createElement('label');
         labelEl.className = imgSelectGallery.dataset.classForLabel || '';
         inputEl.type = 'radio';
@@ -41,8 +42,14 @@ export function openImgSelectDialog(initialURL:string, onSelection: (selectedURL
         inputEl.className = 'sr-only';
         imgEl.title = galRecord['Creator'] + '\n' + galRecord['Original Link'];
         imgEl.src = galRecord['Thumbnail'];
-        imgEl.alt = galRecord['Alt'];
+        imgEl.alt = '';
+          //putting alt text for image confuses JAWS screen reader into using it for both label of radio button and image, so text gets repeated
+          //seperating out alt text to its own hidden element correctly labels the choice once only
+        imgEl.ariaHidden = 'true'; //hide image completely from screen readers to stop the reading out title
         imgEl.className = imgSelectGallery.dataset.classForImg || '';
+        altEl.textContent = galRecord['Alt'];
+        altEl.className = 'sr-only';
+        labelEl.appendChild(altEl);
         labelEl.appendChild(inputEl);
         labelEl.appendChild(imgEl);
         imgSelectGallery.appendChild(labelEl);
@@ -94,6 +101,30 @@ function setImgCredit(imgURL: string | null) {
   }
 }
 
+function completeSelection() {
+  const url = imgSelectDialogForm.imageGallerySelect.value;
+      
+  //find the gallery record for the selection
+  let galRecord = null;
+  let altText = '';
+  if (imgGalleryRecords) {
+    galRecord = imgGalleryRecords.find((r) => r['URL'] === url);
+    if (galRecord) {
+      altText = galRecord['Alt'];
+    }
+  }
+
+  if (isValidImgURL(url)) {
+    if (onSelectionCallback) {
+      onSelectionCallback(url, altText);
+      onSelectionCallback = null;
+    }
+    imgSelectDialog.close();
+  }
+  else {
+    setImgSelectError('Image link not valid.');
+  };
+}
 
 
 document.getElementById('image-select')!.addEventListener('click', (
@@ -102,17 +133,7 @@ document.getElementById('image-select')!.addEventListener('click', (
   const target = event.target as HTMLDialogElement;
   switch(target.dataset.ctrl) {
     case 'ok':
-      const url = imgSelectDialogForm.imageGallerySelect.value;
-      if (isValidImgURL(url)) {
-        if (onSelectionCallback) {
-          onSelectionCallback(url);
-          onSelectionCallback = null;
-        }
-        imgSelectDialog.close();
-      }
-      else {
-        setImgSelectError('Image link not valid.');
-      };
+      completeSelection();
       break;
     case 'cancel':
       imgSelectDialog.close();

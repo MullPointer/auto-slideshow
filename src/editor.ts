@@ -198,8 +198,9 @@ document.getElementById('slides')!.addEventListener('click', (event: MouseEvent)
   let nextSlide: SlideSection | null;
   switch(clickedButton.dataset.ctrl) {
     case 'img':
-      openImgSelectDialog(currentSlide.imgURL, (selectedURL:string) => {
+      openImgSelectDialog(currentSlide.imgURL, (selectedURL:string, altText:string) => {
           currentSlide.imgURL = selectedURL;
+          currentSlide.imgAlt = 'Image - ' + altText;
         });
       break;
     case 'up':
@@ -207,11 +208,13 @@ document.getElementById('slides')!.addEventListener('click', (event: MouseEvent)
       if (target) {
         slidesCol.insertBefore(currentSlide, target);
       }
+      updateSlideNums();
       break;
     case 'down':
       nextSlide = currentSlide.nextSlide();
       target = nextSlide ? nextSlide.nextSlide() : null;
-      slidesCol.insertBefore(currentSlide, target);      
+      slidesCol.insertBefore(currentSlide, target); 
+      updateSlideNums();     
       break;
     case 'split':
       target = currentSlide.nextSlide();
@@ -230,33 +233,61 @@ document.getElementById('slides')!.addEventListener('click', (event: MouseEvent)
         target.slideText += '\n' + currentSlide.slideText;
         currentSlide.remove();
       }
+      updateSlideNums();
       break;
     case 'delete':
       currentSlide.remove();
+      updateSlideNums();
       break;
   }
   
 });
 
 document.getElementById('ctrl-add-slide')!.addEventListener('click', () => {
-  addSlide();
+  const newSlide = addSlide();
+  const newTextArea = newSlide.querySelector('textarea') as HTMLTextAreaElement;
+  newTextArea.focus();
 });
 
 
-function addSlide(slideBefore: (HTMLElement | null) = null, initial: SlideProperties = {text:"",imgURL:""}) {
+function addSlide(slideBefore: (HTMLElement | null) = null, initial: SlideProperties = {text:"",imgURL:""}): SlideSection {
   const templateElement = document.querySelector('#template-slide-section') as HTMLTemplateElement;
   const slideTemplate = templateElement.content.children[0] as SlideSection;
   const newSlide = slideTemplate.cloneNode(true) as SlideSection;
   slideIDCounter++;
-  newSlide.id = "slide-" + slideIDCounter;
+  newSlide.id = `slide-${slideIDCounter}`;
   slidesCol.insertBefore(newSlide, slideBefore);
   newSlide.slideProps = initial;
     //need to add element to DOM before it becomes custom element
+
+  const slideLabel = newSlide.querySelector('h3') as HTMLHeadingElement;
+  const labelID = `slide-label-${slideIDCounter}`;
+  slideLabel.id = labelID;
+  newSlide.setAttribute('aria-labelledby', labelID);
+  updateSlideNums();
+
+  const slideControls = newSlide.querySelectorAll('input, textarea, button');
+  for(const control of slideControls ) {
+    control.setAttribute('aria-describedby', labelID);
+    //set describedby to the slide's label so that a screen reader user can tell which slide a control belongs to without backtracking to the region
+  }
+
+  return newSlide
 }
 
 function clearSlides() {
   const slideEls = document.querySelectorAll(slideSelector);
   for (const slideNode of slideEls) {
     slideNode.remove();
+  }
+}
+
+function updateSlideNums() {
+  const slideEls = document.querySelectorAll(slideSelector);
+  let slideNum = 1;
+  for (const slideNode of slideEls) {
+    const slideLabel = slideNode.querySelector('h3') as HTMLHeadingElement;
+    slideLabel.textContent = `Slide ${slideNum}`;
+    slideNum++;
   }
 }

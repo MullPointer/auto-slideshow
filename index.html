@@ -15,7 +15,7 @@
       <img src="/icons/icon.png" alt="Auto Slideshow Editor" class="w-16 h-16" />
 
       <div class="flex flex-row flex-wrap justify-end">
-        <button id="ctrl-slideshow-name" class="m-1 border-blue-900"><h1 class="text-right p-2">Untitled</h1></button>
+        <button id="ctrl-slideshow-name" class="m-1 border-blue-900" aria-label="slideshow name"><h1 class="text-right p-2">Untitled</h1></button>
 
         <nav id="main-menu">
           <button id="ctrl-menu" aria-label="Menu" aria-expanded="false" aria-controls="main-menu"
@@ -93,23 +93,26 @@
 
     <template id="template-slide-section">
       <slide-section role="region"
-          class="flex flex-row flex-wrap justify-evenly mx-2 my-4 border bg-blue-50 border-blue-500 rounded-md">
-          <input 
-            type="image"
-            data-ctrl="img"
-            class="w-96 aspect-video max-w-[95%] m-2 text-center object-contain bg-white border border-blue-500"
-            src=""
-            alt="Select an image"
-            referrerpolicy="same-origin"
-          >
-          </button>
-          <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-500"></textarea>
-          <div class="flex-row [@media(min-width:50rem)]:flex-col flex justify-evenly m-1">
-            <button data-ctrl="up" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" >Move Up</button>
-            <button data-ctrl="down" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Move Down</button>
-            <button data-ctrl="split" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Split</button>
-            <button data-ctrl="combine" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Combine Up</button>
-            <button data-ctrl="delete" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Delete</button>
+          class="block mx-2 my-4 border bg-blue-50 border-blue-500 rounded-md">
+          <h3 class="mx-1">Slide</h3>
+          <div class="flex flex-row flex-wrap justify-evenly">
+            <input 
+              type="image"
+              data-ctrl="img"
+              class="w-96 aspect-video max-w-[95%] m-2 text-center object-contain bg-white border border-blue-500"
+              src=""
+              alt="Select an image"
+              referrerpolicy="same-origin"
+            >
+            </button>
+            <textarea class="ctrl-text min-h-40 grow resize-none m-2 p-1 border border-blue-500"></textarea>
+            <div class="flex-row [@media(min-width:50rem)]:flex-col flex justify-evenly m-1">
+              <button data-ctrl="up" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500" >Move Up</button>
+              <button data-ctrl="down" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Move Down</button>
+              <button data-ctrl="split" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Split</button>
+              <button data-ctrl="combine" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Combine Up</button>
+              <button data-ctrl="delete" class="m-1 p-2 bg-white hover:bg-blue-300 border rounded-md border-blue-500">Delete</button>
+            </div>
           </div>
         </slide-section>
     </template>

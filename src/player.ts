@@ -47,6 +47,7 @@ function showIntro() {
     document.getElementById('player')!.classList.add('hidden');
     document.getElementById('intro')!.classList.remove('hidden');
     document.getElementById('about')!.classList.remove('hidden');
+    document.getElementById('ctrl-start-slideshow')!.focus();
 }
 
 
@@ -136,6 +137,19 @@ document.getElementById('ctrl-start-slideshow')!.addEventListener('click', async
     advanceSlide();
 });
 
-document.getElementById('ctrl-about')!.addEventListener('click', () => {
-    document.getElementById('about-details')!.classList.toggle('hidden');
+document.getElementById('ctrl-about')!.addEventListener('click', (event: MouseEvent) => {
+    //button toggles the visibility of an expanding element
+    const clickedButton = event.currentTarget as HTMLElement;
+    const controlledID = clickedButton.getAttribute('aria-controls');
+    if (controlledID) {
+        const elemControlled = document.getElementById(controlledID)!;
+        if (clickedButton.ariaExpanded === 'true') {
+            clickedButton.ariaExpanded = 'false'
+            elemControlled.ariaHidden = 'true';
+        }
+        else {
+            clickedButton.ariaExpanded = 'true'
+            elemControlled.ariaHidden = 'false';
+        }
+    }
 });
