@@ -1,7 +1,0 @@
-{
-  "port": 8085,
-  "root": "",
-  "open": "dist/index.html",
-  "browser": "chromium",
-  "https": true
-}
